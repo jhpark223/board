@@ -5,13 +5,13 @@ import com.example.jhboard.post.Post;
 import com.example.jhboard.post.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/comment")
+@RequestMapping("/api")
 public class CommentApiController {
 
     @Autowired
@@ -20,8 +20,8 @@ public class CommentApiController {
     @Autowired
     private PostRepository postRepository;
 
-    // 댓글 작성 API
-    @PostMapping("/create")
+    // 댓글 작성
+    @PostMapping("/comment")
     public Comment createComment(@RequestBody CommentDto request, Authentication auth) {
         CustomUser user = (CustomUser) auth.getPrincipal();
 
@@ -35,4 +35,15 @@ public class CommentApiController {
 
         return commentRepository.save(comment);
     }
+
+    // 댓글 조회
+    @GetMapping("/comment/{postId}")
+    public List<CommentDto> getCommentsByPostId(@PathVariable Long postId) {
+        List<Comment> comments = commentRepository.findByPostId(postId);
+        return comments.stream() //java의 stream 사용
+                .map(CommentDto::new)
+                .collect(Collectors.toList());
+    }
+
+
 }

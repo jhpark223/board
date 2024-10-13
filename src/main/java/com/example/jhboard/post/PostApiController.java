@@ -8,7 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/post")
+@RequestMapping("/api")
 public class PostApiController {
 
     @Autowired
@@ -17,8 +17,8 @@ public class PostApiController {
     @Autowired
     private MemberRepository memberRepository;
 
-    // 게시글 생성 API
-    @PostMapping("/create")
+    // 게시글 작성
+    @PostMapping("/post")
     public Post createPost(@RequestBody Post post, Authentication auth) {
         CustomUser user = (CustomUser) auth.getPrincipal();
         Member member = memberRepository.findById(user.id)
@@ -27,5 +27,13 @@ public class PostApiController {
         post.setMember(member);
         post.setViewCount(0); // 조회수 초기화
         return postRepository.save(post);
+    }
+
+    // 게시글 조회
+    @GetMapping("/post/{id}")
+    public PostDto getPost(@PathVariable Long id) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+        return new PostDto(post); // DTO로 변환하여 반환
     }
 }

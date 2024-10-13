@@ -34,12 +34,8 @@ public class PostController {
 
     // 게시글 detail 페이지 표시
     @GetMapping("/post/{id}")
-    public String detail(@PathVariable Long id, Model model) {
-        Post post = postRepository.findById(id).orElseThrow(() -> new RuntimeException("Post not found"));
-        List<Comment> comments = commentRepository.findByPostId(post.getId());
+    public String detail(Model model) {
 
-        model.addAttribute("post", post); //서버에서 뷰로 데이터 전달
-        model.addAttribute("comments", comments);
         return "post_detail"; // post_detail.html로 이동
     }
 }
