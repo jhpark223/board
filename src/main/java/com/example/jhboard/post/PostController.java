@@ -1,5 +1,7 @@
 package com.example.jhboard.post;
 
+import com.example.jhboard.comment.Comment;
+import com.example.jhboard.comment.CommentRepository;
 import com.example.jhboard.post.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,6 +15,8 @@ public class PostController {
 
     @Autowired
     private PostRepository postRepository;
+    @Autowired
+    private CommentRepository commentRepository;
 
     // 홈 화면: 게시글 목록 표시
     @GetMapping("/home")
@@ -28,5 +32,14 @@ public class PostController {
         return "post_form"; // post_form.html로 이동
     }
 
-    // **createPost 메서드 제거됨**
+    // 게시글 detail 페이지 표시
+    @GetMapping("/post/{id}")
+    public String detail(@PathVariable Long id, Model model) {
+        Post post = postRepository.findById(id).orElseThrow(() -> new RuntimeException("Post not found"));
+        List<Comment> comments = commentRepository.findByPostId(post.getId());
+
+        model.addAttribute("post", post); //서버에서 뷰로 데이터 전달
+        model.addAttribute("comments", comments);
+        return "post_detail"; // post_detail.html로 이동
+    }
 }
