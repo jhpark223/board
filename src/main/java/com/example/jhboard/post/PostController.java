@@ -38,4 +38,10 @@ public class PostController {
 
         return "post_detail"; // post_detail.html로 이동
     }
+
+    // 게시글 수정 페이지 표시
+    @GetMapping("/post/edit/{id}")
+    public String editPost(@PathVariable Long id) {
+        return "edit"; // edit.html로 이동
+    }
 }

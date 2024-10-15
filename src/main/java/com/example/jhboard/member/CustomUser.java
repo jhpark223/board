@@ -10,7 +10,7 @@ public class CustomUser extends User {
     public Long id;
 
     public CustomUser(
-            String username,
+            String username, //유저 id
             String password,
             Collection<? extends GrantedAuthority> authorities) {
         super(username, password, authorities);

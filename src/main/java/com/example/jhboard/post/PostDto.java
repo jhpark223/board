@@ -1,12 +1,14 @@
 package com.example.jhboard.post;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@NoArgsConstructor // 기본 생성자 자동추가
 public class PostDto {
     private Long id;
     private String title;
@@ -14,7 +16,7 @@ public class PostDto {
     private String authorName;
     private LocalDateTime created;
     private int viewCount;
-
+    private boolean checkAuth;
 
     public PostDto(Post post) {
         this.id = post.getId();
@@ -24,4 +26,6 @@ public class PostDto {
         this.created = post.getCreated();
         this.viewCount = post.getViewCount();
     }
+
+
 }
