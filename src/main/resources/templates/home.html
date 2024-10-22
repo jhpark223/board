@@ -3,34 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+          content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>게시판 홈</title>
+    <link rel="stylesheet" href="/css/home.css">
 </head>
 <body>
-<h1>게시판</h1>
-<a href="/post/new">새 글 작성</a>
-<table>
-    <thead>
-    <tr>
-        <th>글번호</th>
-        <th>제목</th>
-        <th>작성자</th>
-        <th>작성일</th>
-        <th>조회수</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="post : ${posts}">
-        <td th:text="${post.id}">글번호</td>
-        <td><a th:href="@{/post/{id}(id=${post.id})}" th:text="${post.title}">제목</a></td>
-        <td th:text="${post.member.displayName}">작성자</td>
+<div class="container">
+    <header>
+        <h1>게시판</h1>
+        <a href="/post/new" class="new-post-btn">새 글 작성</a>
+    </header>
 
-        <td th:text="${#temporals.format(post.created, 'yyyy-MM-dd HH:mm')}">[Formatted Date]</td>
-
-        <td th:text="${post.viewCount}">조회수</td>
-    </tr>
-    </tbody>
-</table>
+    <table>
+        <thead>
+        <tr>
+            <th>글번호</th>
+            <th>제목</th>
+            <th>작성자</th>
+            <th>작성일</th>
+            <th>조회수</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="post : ${posts}">
+            <td th:text="${post.id}">글번호</td>
+            <td><a th:href="@{/post/{id}(id=${post.id})}" th:text="${post.title}">제목</a></td>
+            <td th:text="${post.member.displayName}">작성자</td>
+            <td th:text="${#temporals.format(post.created, 'yyyy-MM-dd HH:mm')}">[Formatted Date]</td>
+            <td th:text="${post.viewCount}">조회수</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
 </body>
 </html>

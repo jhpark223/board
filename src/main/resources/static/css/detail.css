@@ -1,0 +1,129 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 800px;
+    margin: 50px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.post-detail table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.post-detail th, .post-detail td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+.post-detail th {
+    background-color: #3498db;
+    color: white;
+    font-weight: normal;
+}
+
+.post-detail td {
+    background-color: #f9f9f9;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 10px;
+}
+
+.edit-btn {
+    background-color: #3498db;
+    color: white;
+}
+
+.delete-btn {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.edit-btn:hover {
+    background-color: #2980b9;
+}
+
+.delete-btn:hover {
+    background-color: #c0392b;
+}
+
+.comments h2 {
+    margin-top: 30px;
+    font-size: 22px;
+    color: #333;
+}
+
+#commentsList {
+    list-style-type: none;
+    padding: 0;
+}
+
+#commentsList li {
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.comment-form textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.comment-form .submit-btn {
+    background-color: #2ecc71;
+    color: white;
+    margin-top: 10px;
+    cursor: pointer;
+    padding: 10px 20px;
+}
+
+.comment-form .submit-btn:hover {
+    background-color: #27ae60;
+}
+
+.back-to-home {
+    margin-top: 30px;
+}
+
+.back-link {
+    color: #3498db;
+    text-decoration: none;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}

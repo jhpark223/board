@@ -1,0 +1,49 @@
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.input-field, .textarea-field {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.textarea-field {
+    height: 150px;
+    resize: vertical;
+}
+
+.submit-btn, .cancel-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+}
+
+.submit-btn {
+    background-color: #3498db;
+    color: #fff;
+}
+
+.submit-btn:hover {
+    background-color: #2980b9;
+}
+
+.cancel-btn {
+    background-color: #95a5a6;
+    color: white;
+}
+
+.cancel-btn:hover {
+    background-color: #7f8c8d;
+}

@@ -36,4 +36,5 @@ public class Post {
         // 기본 생성자
     }
 
+
 }

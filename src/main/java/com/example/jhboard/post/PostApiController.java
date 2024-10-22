@@ -37,6 +37,10 @@ public class PostApiController {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
+        // 조회수 증가
+        post.setViewCount(post.getViewCount() + 1);
+        postRepository.save(post);
+
         PostDto dto = new PostDto(post);
 
         // 로그인한 사용자인지 확인 여부
