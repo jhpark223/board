@@ -4,6 +4,8 @@ import com.example.jhboard.member.CustomUser;
 import com.example.jhboard.post.Post;
 import com.example.jhboard.post.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,35 +17,19 @@ import java.util.stream.Collectors;
 public class CommentApiController {
 
     @Autowired
-    private CommentRepository commentRepository;
-
-    @Autowired
-    private PostRepository postRepository;
+    private CommentService commentService;
 
     // 댓글 작성
     @PostMapping("/comment")
-    public Comment createComment(@RequestBody CommentDto request, Authentication auth) {
-        CustomUser user = (CustomUser) auth.getPrincipal();
-
-        Post post = postRepository.findById(request.getPostId())
-                .orElseThrow(() -> new RuntimeException("Post not found"));
-
-        Comment comment = new Comment();
-        comment.setDisplayName(user.displayName); // 로그인한 사용자의 displayName 설정
-        comment.setContent(request.getContent());
-        comment.setPost(post); // postId 대신 Post 객체를 설정
-
-        return commentRepository.save(comment);
+    public ResponseEntity<Comment> createComment(@RequestBody CommentDto request, Authentication auth) {
+        Comment createdComment = commentService.createComment(request, auth);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdComment);
     }
 
-    // 댓글 조회
+    // 게시글에 대한 댓글 조회
     @GetMapping("/comment/{postId}")
-    public List<CommentDto> getCommentsByPostId(@PathVariable Long postId) {
-        List<Comment> comments = commentRepository.findByPostId(postId);
-        return comments.stream() //java의 stream 사용
-                .map(CommentDto::new)
-                .collect(Collectors.toList());
+    public ResponseEntity<List<CommentDto>> getCommentsByPostId(@PathVariable Long postId) {
+        List<CommentDto> comments = commentService.getCommentsByPostId(postId);
+        return ResponseEntity.ok(comments);
     }
-
-
 }
