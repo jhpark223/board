@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 public class PostService {
@@ -19,6 +20,9 @@ public class PostService {
 
     @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    private PostDocumentRepository postDocumentRepository;
 
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
@@ -31,7 +35,23 @@ public class PostService {
 
         post.setMember(member);
         post.setViewCount(0); // 조회수 초기화
-        return postRepository.save(post);
+        Post savedPost = postRepository.save(post);
+
+        // Elasticsearch에 인덱싱
+        indexPost(savedPost);
+
+        return savedPost;
+    }
+
+    // Elasticsearch에 게시글 인덱싱
+    private void indexPost(Post post) {
+        PostDocument postDocument = new PostDocument();
+        postDocument.setId(post.getId());
+        postDocument.setTitle(post.getTitle());
+        postDocument.setContent(post.getContent());
+        postDocument.setAuthorName(post.getMember().getDisplayName());
+        postDocument.setViewCount(post.getViewCount());
+        postDocumentRepository.save(postDocument);
     }
 
     // 게시글 조회
@@ -47,14 +67,13 @@ public class PostService {
         if (Boolean.FALSE.equals(redisTemplate.hasKey(redisKey))) {
             post.setViewCount(post.getViewCount() + 1);
             postRepository.save(post);
+            indexPost(post);  // Elasticsearch에 조회수 업데이트
 
             // Redis에 30초 TTL 설정하여 조회 기록 저장
             redisTemplate.opsForValue().set(redisKey, "true", 30, TimeUnit.SECONDS);
         }
 
         PostDto dto = new PostDto(post);
-
-        // 로그인한 사용자인지 확인 여부
         boolean isAuthor = user.id.equals(post.getMember().getId());
         dto.setCheckAuth(isAuthor);
 
@@ -72,10 +91,12 @@ public class PostService {
 
         post.setTitle(postDto.getTitle());
         post.setContent(postDto.getContent());
+        Post updatedPost = postRepository.save(post);
 
-        postRepository.save(post);
+        // Elasticsearch에 인덱싱
+        indexPost(updatedPost);
 
-        return new PostDto(post);
+        return new PostDto(updatedPost);
     }
 
     // 게시글 삭제
@@ -89,11 +110,23 @@ public class PostService {
         }
 
         postRepository.delete(post);
+
+        // Elasticsearch에서 삭제
+        postDocumentRepository.deleteById(id);
     }
 
     // 게시글 검색
     public List<PostDto> searchPosts(String keyword) {
-        List<Post> posts = postRepository.searchPosts(keyword);
-        return posts.stream().map(PostDto::new).toList();
+        List<PostDocument> searchResults = postDocumentRepository.findByTitleContainingOrContentContaining(keyword, keyword);
+        return searchResults.stream()
+                .map(postDocument -> {
+                    PostDto postDto = new PostDto();
+                    postDto.setId(postDocument.getId());
+                    postDto.setTitle(postDocument.getTitle());
+                    postDto.setContent(postDocument.getContent());
+                    postDto.setAuthorName(postDocument.getAuthorName());
+                    postDto.setViewCount(postDocument.getViewCount());
+                    return postDto;
+                }).collect(Collectors.toList());
     }
 }

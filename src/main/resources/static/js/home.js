@@ -15,7 +15,7 @@
                     row.innerHTML = `
                         <td>${post.id}</td>
                         <td><a href="/post/${post.id}">${post.title}</a></td>
-                        <td>${post.memberDisplayName}</td>
+                        <td>${post.authorName}</td>
                         <td>${new Date(post.created).toLocaleString()}</td>
                         <td>${post.viewCount}</td>
                     `;
