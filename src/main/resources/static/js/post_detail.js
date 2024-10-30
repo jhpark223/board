@@ -18,6 +18,7 @@
                 // 댓글 작성 폼에 postId 설정
                 document.getElementById("postIdValue").value = data.id;
 
+                // 게시글 작성자와 로그인 사용자가 같은 경우 수정/삭제 버튼 표시
                 if (data.checkAuth) {
                 document.getElementById("editButton").style.display = "block";
                 document.getElementById("editButton").addEventListener("click", function() {

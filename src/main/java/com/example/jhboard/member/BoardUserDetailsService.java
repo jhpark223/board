@@ -27,10 +27,11 @@ public class BoardUserDetailsService implements UserDetailsService {
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("normalUser"));
 
-        var a = new CustomUser(user.getUsername(),user.getPassword(), authorities); //auth변수 조작
+        //UserDetails 인터페이스는 사용자명,비밀번호,권한 정보만을 가지고 있음
+        var a = new CustomUser(user.getUsername(),user.getPassword(), authorities); //기본 User클래스를 상속받아서 displayName과 id를 추가한 CustomUser클래스를 사용
         a.displayName = user.getDisplayName();
         a.id = user.getId(); //auth변수에서 id를 가져오기 위해 추가
-        return a;
+        return a; //UserDetails 인터페이스를 구현한 CustomUser객체를 반환
     }
 
 

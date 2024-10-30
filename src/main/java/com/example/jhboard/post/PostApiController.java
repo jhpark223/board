@@ -18,7 +18,7 @@ public class PostApiController {
 
     // 게시글 작성
     @PostMapping("/post")
-    public ResponseEntity<Post> createPost(@RequestBody Post post, Authentication auth) {
+    public ResponseEntity<Post> createPost(@RequestBody Post post, Authentication auth) { //RequestBody를 통해 json 데이터를 Post 객체로 알아서 변환
         Post createdPost = postService.createPost(post, auth);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPost);
     }

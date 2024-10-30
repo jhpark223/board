@@ -23,7 +23,8 @@ public class SecurityConfig {
         http.authorizeHttpRequests((authorize) ->
                 authorize.requestMatchers("/**").permitAll()
         );
-        http.formLogin((formLogin) -> formLogin.loginPage("/login")
+
+        http.formLogin((formLogin) -> formLogin.loginPage("/login")  // UserDetailsService를 사용하여 로그인 처리
                 .defaultSuccessUrl("/home",true)
                 .failureUrl("/login?error=true")
         );
