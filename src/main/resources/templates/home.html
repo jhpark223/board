@@ -15,6 +15,12 @@
         <a href="/post/new" class="new-post-btn">새 글 작성</a>
     </header>
 
+    <!-- 검색창 추가 -->
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="검색어를 입력하세요">
+        <button onclick="searchPosts()">검색</button>
+    </div>
+
     <table>
         <thead>
         <tr>
@@ -25,7 +31,8 @@
             <th>조회수</th>
         </tr>
         </thead>
-        <tbody>
+        <tbody id="postList">
+        <!-- 초기 게시글 목록 -->
         <tr th:each="post : ${posts}">
             <td th:text="${post.id}">글번호</td>
             <td><a th:href="@{/post/{id}(id=${post.id})}" th:text="${post.title}">제목</a></td>
@@ -36,5 +43,7 @@
         </tbody>
     </table>
 </div>
+
+<script src="/js/home.js"></script>
 </body>
 </html>

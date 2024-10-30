@@ -8,6 +8,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -88,5 +89,11 @@ public class PostService {
         }
 
         postRepository.delete(post);
+    }
+
+    // 게시글 검색
+    public List<PostDto> searchPosts(String keyword) {
+        List<Post> posts = postRepository.searchPosts(keyword);
+        return posts.stream().map(PostDto::new).toList();
     }
 }
