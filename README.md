@@ -8,6 +8,7 @@
 - **게시글 CRUD**
     - 게시글 작성, 조회, 수정, 삭제
     - 게시글 작성자만 수정 및 삭제 가능 (Spring Security 활용)
+    - 조회수 중복 증가 방지 (Redis 30초 TTL)
 
 - **회원 관리**
     - 회원가입 및 로그인
@@ -22,6 +23,7 @@
 - **JPA**
 - **Spring Security**
 - **AWS RDS (MySQL)**
+- **Redis**
 
 ### 프론트엔드
 - **HTML/CSS/JavaScript**
