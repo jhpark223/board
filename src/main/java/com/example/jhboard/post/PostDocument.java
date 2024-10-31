@@ -6,7 +6,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
 
 @Data
 @Document(indexName = "posts")
-public class PostDocument {
+public class PostDocument { // Elasticsearch에 저장될 데이터
     @Id
     private Long id;
     private String title;
