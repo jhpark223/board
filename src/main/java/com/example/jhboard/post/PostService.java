@@ -27,6 +27,9 @@ public class PostService {
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
+    @Autowired
+    private RedisLockRepository redisLockRepository;
+
     // 게시글 작성
     public Post createPost(Post post, Authentication auth) {
         CustomUser user = (CustomUser) auth.getPrincipal();
@@ -56,29 +59,45 @@ public class PostService {
 
     // 게시글 조회
     public PostDto getPost(Long id, Authentication auth) {
-        Post post = postRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
-
-        // Redis 키 생성: 사용자 ID와 게시글 ID를 기반으로 설정
-        CustomUser user = (CustomUser) auth.getPrincipal();
-        String redisKey = "viewed:post:" + id + ":user:" + user.id;
-
-        // Redis에서 조회 여부 확인 및 조회수 증가
-        if (Boolean.FALSE.equals(redisTemplate.hasKey(redisKey))) {
-            post.setViewCount(post.getViewCount() + 1);
-            postRepository.save(post);
-            indexPost(post);  // Elasticsearch에 조회수 업데이트
-
-            // Redis에 30초 TTL 설정하여 조회 기록 저장
-            redisTemplate.opsForValue().set(redisKey, "true", 30, TimeUnit.SECONDS);
+        //Redis의 Lettuce를 사용하여 lock을 구현 - 조회수 증가 로직에 대한 동시성 문제 해결
+        //lock 획득 시도
+        try {
+            while (!redisLockRepository.lock(id)) {
+                Thread.sleep(100); // 100ms를 기다려 redis 부하를 줄임
+            }
+        } catch (InterruptedException e) {
+            throw new RuntimeException("Thread interrupted while waiting for lock", e);
         }
 
-        PostDto dto = new PostDto(post);
-        boolean isAuthor = user.id.equals(post.getMember().getId());
-        dto.setCheckAuth(isAuthor);
+        //lock 획득 후 게시글 조회
+        try {
+            Post post = postRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        return dto;
+            // Redis 키 생성: 사용자 ID와 게시글 ID를 기반으로 설정
+            CustomUser user = (CustomUser) auth.getPrincipal();
+            String redisKey = "viewed:post:" + id + ":user:" + user.id;
+
+            // Redis에서 조회 여부 확인 및 조회수 증가
+            if (Boolean.FALSE.equals(redisTemplate.hasKey(redisKey))) {
+                post.setViewCount(post.getViewCount() + 1);
+                postRepository.saveAndFlush(post);
+                indexPost(post);  // Elasticsearch에 조회수 업데이트
+
+                // Redis에 30초 TTL 설정하여 조회 기록 저장
+                redisTemplate.opsForValue().set(redisKey, "true", 30, TimeUnit.SECONDS);
+            }
+
+            PostDto dto = new PostDto(post);
+            boolean isAuthor = user.id.equals(post.getMember().getId());
+            dto.setCheckAuth(isAuthor);
+
+            return dto;
+        } finally {
+            redisLockRepository.unlock(id); //lock 해제
+        }
     }
+
 
     // 게시글 수정
     public PostDto updatePost(Long id, PostDto postDto, Authentication auth) {
